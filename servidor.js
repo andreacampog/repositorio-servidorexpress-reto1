@@ -2,8 +2,10 @@
 
 const express = require ('express'); 
 const { default: mongoose } = require('mongoose');
+const { findOne } = require('./modelos/Persona.js');
 const app = express();  //Instancia del paquete express
 const router = express.Router();
+
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 const PersonaSchema = require("./modelos/Persona.js");
@@ -36,7 +38,7 @@ router.get('/persona',(req,res)=>{
 //Crear una persona 
 router.post('/persona', (req,res)=>{
     let nuevaPersona = new PersonaSchema({
-    id: req.body.id,
+    idPersona: req.body.idPersona,
     tipo_documento: req.body.tipo_documento,
     documento: req.body.documento,
     nombres: req.body.nombres,
@@ -75,6 +77,36 @@ router.put('/persona/:id',(req,res)=>{
     });
 });
 
+
+//Actualizar Persona por id Persona
+
+
+router.put('/personaxid/:idPersona', (req, res) => {
+    console.log(req);
+    PersonaSchema.findOneAndUpdate({idPersona: req.params.idPersona}, req.body, {new: true}, (err, persona) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(persona);
+    });
+});
+
+
+//Borrar una Personaxid
+
+router.delete('/personaxid/:idPersona', (req, res) => {
+    console.log(req);
+    PersonaSchema.findOneAndDelete({idPersona: req.params.idPersona}, (err, persona) => {  //consultar filter mongoDB
+        if (err) {
+            res.send(err);       
+    
+        }
+        res.json(persona);
+    });
+});
+
+
+
 //Borrar una Persona
 
 router.delete('/persona/:id', (req,res)=>{
@@ -98,6 +130,4 @@ app.listen(3000, () =>{
     console.log("Servidor corriendo en el puerto 3000");
 
 });
-
-
 
